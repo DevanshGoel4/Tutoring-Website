@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
     <title>Tutoring Signup</title>
@@ -8,10 +9,10 @@
             padding: 0;
             background-color: #f4f4f4;
             background-image: 
-                radial-gradient(circle, rgba(204, 204, 204, 1) 1px, rgba(204, 204, 204, 0) 1px), /* Dots */
-                radial-gradient(circle, rgba(204, 204, 204, 0) 40%, rgba(244, 244, 244, 0) 60%); /* Fade */
-            background-size: 10px 10px, 100% 100%; /* Dot size and fade size */
-            background-position: center; /* Center the fade */
+                radial-gradient(circle, rgba(204, 204, 204, 1) 1px, rgba(204, 204, 204, 0) 1px),
+                radial-gradient(circle, rgba(204, 204, 204, 0) 40%, rgba(244, 244, 244, 0) 60%);
+            background-size: 10px 10px, 100% 100%;
+            background-position: center;
         }
         header {
             background-color: #6495ED;
@@ -20,7 +21,6 @@
             text-align: center;
             position: relative;
         }
-        /* Style for the navigation button */
         #switchButton {
             position: absolute;
             right: 20px;
@@ -64,7 +64,7 @@
 
 <header>
     <h1>Welcome to My Tutoring Service</h1>
-    <a id="switchButton" href="reviews.html">Reviews</a> <!-- Navigation button -->
+    <a id="switchButton" href="reviews.html">Reviews</a>
 </header>
 
 <section id="intro">
@@ -79,7 +79,7 @@
 
 <section id="signup">
     <h2>Sign Up for Tutoring</h2>
-    <form>
+    <form id="signupForm">
         <h1 id="msg"></h1>
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" required><br>
@@ -99,42 +99,51 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
     <script>
-        let form = document.querySelector("form");
+        let form = document.querySelector("#signupForm");
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             document.querySelector("#submit").value = "Submitting...";
-            let data = new FormData(form);
-    
-            fetch('https://script.google.com/macros/s/AKfycbx0Ji6NZkdQYk0SOurWk9WuM8zSiknwTmsxf1fALQpzTM4jHrGgWR246usJb3E7hzVvcg/exec', {
-                method: "POST", 
-                body: data
+            let formData = {
+                name: document.querySelector("#name").value,
+                email: document.querySelector("#email").value,
+                subject: document.querySelector("#subject").value,
+                message: document.querySelector("#message").value,
+            };
+
+            fetch('/api/submit', {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
             })
-            .then(res => res.text())
+            .then(res => res.json())
             .then(data => {
-                document.querySelector("#msg").innerHTML = data;
-    
-                const duration = 2 * 1000; // Confetti for 2 seconds
+                document.querySelector("#msg").innerHTML = data.message;
+
+                // Confetti animation on success
+                const duration = 2 * 1000;
                 const animationEnd = Date.now() + duration;
-                const colors = ['#32CD32', '#FFD700']; // Green and yellow
-    
+                const colors = ['#32CD32', '#FFD700'];
+
                 const frame = () => {
                     const timeLeft = animationEnd - Date.now();
-                    if (timeLeft <= 0) return; 
-    
-                    const particleCount = Math.max(1, 15 * (timeLeft / duration)); 
+                    if (timeLeft <= 0) return;
+
+                    const particleCount = Math.max(1, 15 * (timeLeft / duration));
                     confetti({
                         particleCount: particleCount,
-                        angle: 60,          
-                        spread: 100,        
-                        origin: { x: Math.random(), y: Math.random() / 2 }, 
+                        angle: 60,
+                        spread: 100,
+                        origin: { x: Math.random(), y: Math.random() / 2 },
                         colors: colors
                     });
-    
-                    requestAnimationFrame(frame); 
+
+                    requestAnimationFrame(frame);
                 };
-    
-                frame(); 
-    
+
+                frame();
+
                 document.querySelector("#submit").value = "Submit";
                 form.reset();
             })
