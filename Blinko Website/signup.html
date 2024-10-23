@@ -1,0 +1,150 @@
+<html>
+<head>
+    <title>Tutoring Signup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            background-image: 
+                radial-gradient(circle, rgba(204, 204, 204, 1) 1px, rgba(204, 204, 204, 0) 1px), /* Dots */
+                radial-gradient(circle, rgba(204, 204, 204, 0) 40%, rgba(244, 244, 244, 0) 60%); /* Fade */
+            background-size: 10px 10px, 100% 100%; /* Dot size and fade size */
+            background-position: center; /* Center the fade */
+        }
+        header {
+            background-color: #6495ED;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            position: relative;
+        }
+        /* Style for the navigation button */
+        #switchButton {
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            background-color: white;
+            color: #6495ED;
+            border: 2px solid #6495ED;
+            padding: 10px 15px;
+            cursor: pointer;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        #about, #signup, #intro {
+            padding: 20px;
+            margin: 20px;
+            background-color: white;
+            border-radius: 5px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label, input, textarea {
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 1rem;
+        }
+        input[type="submit"] {
+            background-color: #6495ED;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Welcome to My Tutoring Service</h1>
+    <a id="switchButton" href="reviews.html">Reviews</a> <!-- Navigation button -->
+</header>
+
+<section id="intro">
+    <h2>Introduction</h2>
+    <p>Welcome! I am excited to offer tutoring services in various subjects. My goal is to help students understand and excel in their studies. I believe that learning should be engaging and enjoyable. Let's work together to achieve your academic goals!</p>
+</section>
+
+<section id="about">
+    <h2>About Me</h2>
+    <p>I love to tutor</p>
+</section>
+
+<section id="signup">
+    <h2>Sign Up for Tutoring</h2>
+    <form>
+        <h1 id="msg"></h1>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br>
+
+        <label for="subject">Subject for Tutoring:</label>
+        <input type="text" id="subject" name="subject" required><br>
+
+        <label for="message">Additional Information:</label>
+        <textarea id="message" name="message" rows="4" required></textarea><br>
+
+        <input type="submit" value="Submit" id="submit">
+    </form>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+    <script>
+        let form = document.querySelector("form");
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            document.querySelector("#submit").value = "Submitting...";
+            let data = new FormData(form);
+    
+            fetch('https://script.google.com/macros/s/AKfycbx0Ji6NZkdQYk0SOurWk9WuM8zSiknwTmsxf1fALQpzTM4jHrGgWR246usJb3E7hzVvcg/exec', {
+                method: "POST", 
+                body: data
+            })
+            .then(res => res.text())
+            .then(data => {
+                document.querySelector("#msg").innerHTML = data;
+    
+                const duration = 2 * 1000; // Confetti for 2 seconds
+                const animationEnd = Date.now() + duration;
+                const colors = ['#32CD32', '#FFD700']; // Green and yellow
+    
+                const frame = () => {
+                    const timeLeft = animationEnd - Date.now();
+                    if (timeLeft <= 0) return; 
+    
+                    const particleCount = Math.max(1, 15 * (timeLeft / duration)); 
+                    confetti({
+                        particleCount: particleCount,
+                        angle: 60,          
+                        spread: 100,        
+                        origin: { x: Math.random(), y: Math.random() / 2 }, 
+                        colors: colors
+                    });
+    
+                    requestAnimationFrame(frame); 
+                };
+    
+                frame(); 
+    
+                document.querySelector("#submit").value = "Submit";
+                form.reset();
+            })
+            .catch(err => {
+                document.querySelector("#msg").innerHTML = "There was an error submitting the form. Please try again.";
+                document.querySelector("#submit").value = "Submit";
+            });
+        });
+    </script>
+</section>
+
+</body>
+</html>
